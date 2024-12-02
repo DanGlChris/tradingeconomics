@@ -1,0 +1,326 @@
+:root {
+    --text_color : #343a40;
+    --button-color: #25cff2;
+    --button-hover-color: #1b92aa;
+    --input-shadow: rgba(0, 123, 255, 0.25);
+    --input-empty-shadow: rgba(255, 0, 0, 0.25);
+    --navbar-color: #333333;
+  }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, readable font */
+    margin: 0;
+    background-color: #f8f9fa; /* Soft background color for a modern look */
+    color: var(--text_color); /* Dark gray text for readability */
+    line-height: 1; /* Improved line height for better readability */
+}
+
+input[type="text"] {
+    width: 5.5em;
+    height: 8px;
+    padding: 10px 15px; /* Padding for better spacing */
+    border: 1px solid #ced4da; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px; /* Readable font size */
+    color: #495057; /* Text color */
+    background-color: #ffffff; /* White background */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Smooth transition for focus */
+}
+
+input[type="text"]:focus {
+    border-color: var(--button-color); /* Highlight border on focus */
+    outline: 0; /* Remove default outline */
+    box-shadow: 0 0 0 0.2rem var(--input-shadow); /* Subtle box shadow on focus */
+}
+
+input[type="text"]::placeholder { /* Style for placeholder text */
+    color: #adb5bd; /* Lighter color for placeholder */
+    opacity: 1; /* Ensure full opacity */
+}
+
+/* Optional: Style for disabled text fields */
+input[type="text"]:disabled {
+    background-color: #e9ecef; /* Grayed out background */
+    opacity: 0.7; /* Reduce opacity */
+    cursor: not-allowed; /* Show not-allowed cursor */
+}   
+
+.container {
+    width: 100%;
+    margin: 0 0;
+    padding: 0 1.3%;
+}
+
+@media (min-width: 1024px) {
+    .container {
+        width: 100%;
+        max-width: 1200px; /* Set a max-width for very large screens */
+        margin: 0 auto; /* Center the container on larger screens */
+        padding: 0;
+    }
+
+    input[type="text"] {
+        width: 8.5em;
+        height: 8px;
+        padding: 10px 15px; /* Padding for better spacing */
+        border: 1px solid #ced4da; /* Light border */
+        border-radius: 5px; /* Rounded corners */
+        font-size: 14px; /* Readable font size */
+        color: #495057; /* Text color */
+        background-color: #ffffff; /* White background */
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Smooth transition for focus */
+    }
+    
+}
+
+/* Sections Styling */
+.navbar{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: baseline; 
+    margin-bottom: 0px;
+    padding: 10px 15px;
+    background-color: #333333;
+}
+.search-section{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: baseline;
+    margin-top: 1px;
+    margin-bottom: 5px;
+    padding: 15px 15px; /* Increased padding for better spacing */
+    border-radius: 5px; /* Slightly rounded corners for a softer look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #ffffff; /* White background for sections */
+}
+.search-section h3{
+    margin: 0px;
+}
+.description-section, .chart-section, .calendar-section {
+    margin-bottom: 5px;
+    padding: 15px 15px; /* Increased padding for better spacing */
+    border-radius: 5px; /* Slightly rounded corners for a softer look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #ffffff; /* White background for sections */
+}
+.description-section h3{
+    margin-top: 2px;
+}
+
+#indicator-description{
+    text-align: justify;
+    line-height: 1.3;
+}
+.title-bar{
+    display: flex; 
+    align-items: baseline; 
+    color: #DDDDDD;
+}
+.title-bar h3{
+    margin: 0px;
+}
+.title-bar p{
+    margin: 0px;
+    margin-left: 10px;   
+}
+
+/* Chart Controls Styling */
+.chart-controls {
+    margin-bottom: 15px;
+    display: flex; /* Use flexbox for layout */
+    gap: 10px; /* Add gap between controls */
+    align-items: center; /* Align items vertically */
+}
+
+.search-section button, .chart-controls button, .calendar-section button{
+    padding: 7px 15px;
+    border: none;
+    border-radius: 2px;
+    background-color: var(--button-color); /* Primary color for buttons */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.search-section button:hover, .chart-controls button:hover {
+    background-color: var(--button-hover-color); /* Darker shade on hover */
+}
+
+.chart-controls select{
+    padding: 7px 15px;
+    border: none;
+    border-radius: 2px;
+    background-color: var(--button-color); /* Primary color for buttons */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+.chart-controls select:hover {
+    background-color: var(--button-hover-color); /* Slightly darker shade on hover */
+}   
+
+/* Chart Styling */
+#data-chart {
+    max-width: 100%; /* Responsive width */
+    height: 400px; /* Fixed height or adjust as needed */
+    margin: 20px 0; /* Add margin for spacing */
+}
+
+.calendar-title{
+    display: flex; 
+    position: relative;
+    justify-content: space-between; 
+    align-items: baseline;
+    margin-top: 1px;
+    margin-bottom: 5px;
+}
+.calendar-title h3{
+    margin: 0px;
+}
+
+/* Button styling */
+#calendar-button-picker {
+    padding: 7px 15px;
+    border: none;
+    border-radius: 2px;
+    background-color: var(--button-color); /* Primary color for buttons */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+#calendar-button-picker:hover{    
+    background-color: var(--button-hover-color);
+}
+
+.date-picker-container {
+    display: none; /* Hidden by default */
+    position: absolute;
+    z-index: 1000; /* Ensures it appears above other elements */
+    bottom: 100%;
+    right: 0%;
+    transform: translateX(-45px) translateY(35px);
+    margin-bottom: 5px;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+/* Show container when button is clicked (you'll need JavaScript for this) */
+.date-picker-container.show {
+    display: block;
+}
+/* Form styling */
+.date-picker-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+/* Input container styling */
+.date-input {
+    width: 100%;
+    padding-bottom: 5px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.date-input input {
+    width: 100%;
+    padding: 8px;
+    padding-right: 30px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Submit button styling */
+.date-picker-container button[type="submit"] {
+    padding: 8px 15px;
+    background-color: var(--button-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.date-picker-container button[type="submit"]:hover {
+    background-color: var(--button-hover-color);
+}
+
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px; /* Add margin for spacing */
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 2px; /* Rounded corners for table */
+    overflow: hidden; /* Hide overflow to maintain rounded corners */
+}
+
+th, td {
+    padding: 7px 10px; /* Increased padding for better readability */
+    text-align: left;
+    border-bottom: 1px solid #e9ecef; /* Light border for rows */
+}
+
+th {
+    background-color: var(--button-hover-color); /* Light background for header */
+    color: #f8f9fa; /* Slightly darker text for headers */
+    font-weight: 500; /* Medium font weight for headers */
+}
+td{    
+    font-size: 14px; /* Readable font size */
+}
+td a{    
+    color: var(--text_color);
+    text-decoration: none;
+}
+td a:-webkit-any-link {
+    color: var(--text_color);
+}
+
+td a:hover {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px; /* Optional: control thickness */
+  text-decoration-style: solid;   /* Optional: style can be solid, wavy, dashed, etc. */
+}
+tr:nth-child(even) {
+    background-color: #f8f9fa; /* Alternate row colors for better readability */
+}
+
+tr:hover {
+    background-color: #e9ecef; /* Highlight row on hover */
+}
+
+.chart-title-section{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: baseline;
+}
+.chart-title-section h3{
+    margin: 0px;
+}
+
+/*Chart canvas*/
+.iChart-chart {
+    background-color: #fff;
+    position: relative;
+    overflow: hidden; 
+    cursor: default;
+}
+
+.mkspinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.chart-container {
+    width: 100%;
+    height: 468px;
+    position: relative;
+}
