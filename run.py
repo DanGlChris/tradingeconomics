@@ -9,7 +9,7 @@ import re
 API_KEY = '55801b0c9a9c45d:s4pb7uh0wrb1aqy'
 app = Flask(__name__)
 
-# Helper function to fetch data from Trading Economics API
+
 def fetch_te_data(url):
     try:
         data = requests.get(f'{url}?c={API_KEY}').json()
@@ -55,7 +55,7 @@ def search_historic_data():
             calendar_df = calendar_df.fillna('N/A')
             calendar_data_ = calendar_df[:-1].to_dict(orient='records')
 
-        # Prepare data for response
+    # Prepare data for response
     response_data = {
         'calendar_data': calendar_data_
     }
@@ -123,28 +123,24 @@ def search_data():
     return jsonify(response_data)
 
 def calculate_growth(actual, previous):
-    # 1. Handle Missing Data (NaN or 'N/A')
     if pd.isna(actual) or pd.isna(previous) or str(actual).upper() == 'N/A' or str(previous).upper() == 'N/A':
         return 'N/A'
 
-    # 2. Extract Numerical Values using Regex
     def extract_number(value):
         if isinstance(value, (int, float)):
-            return value  # If it's already a number, return it
-        match = re.search(r'[-+]?\d*\.?\d+', str(value))  # Regex to find numbers (integers or decimals)
+            return value  
+        match = re.search(r'[-+]?\d*\.?\d+', str(value)) 
         if match:
             return float(match.group(0))
         else:
-            return None  # Return None if no number is found
+            return None 
 
     actual_num = extract_number(actual)
     previous_num = extract_number(previous)
 
-    # 3. Validate Extracted Numbers
     if actual_num is None or previous_num is None:
         return 'N/A'
 
-    # 4. Calculate and Return Growth Direction
     if actual_num > previous_num:
         return 'Positive'
     elif actual_num < previous_num:

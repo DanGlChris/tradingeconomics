@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const descriptionParagraph = document.getElementById('indicator-description');
     
     const errorElement = document.getElementById('error-message');
-
-    //const chartCanvas = document.getElementById('data-chart');
     const calendarTableBody = document.getElementById('calendar-table').querySelector('tbody');
     const chartTypeSelect = document.getElementById('chart-type');
     const dateRangeSelect = document.getElementById('date-range');
@@ -67,19 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const containerHeight = datePickerContainer.offsetHeight;
         
         if (buttonRect.top < containerHeight) {
-            // Not enough space above, position below
             datePickerContainer.style.bottom = 'auto';
             datePickerContainer.style.top = '100%';
         } else {
-            // Enough space above, position above
             datePickerContainer.style.top = 'auto';
             datePickerContainer.style.bottom = '100%';
         }
     }
 
     window.addEventListener('resize', adjustPosition);
-
-    // Hide date picker when clicking outside
     document.addEventListener('click', (e) => {
         if (!datePickerContainer.contains(e.target) && e.target !== calendarButton) {
             datePickerContainer.classList.remove('show');
@@ -87,16 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });    
 
-    // Show date picker when calendar button is clicked
     calendarButton.addEventListener('click', (e) => {
         e.stopPropagation();
         datePickerContainer.classList.toggle('show');
         adjustPosition();
     });
 
-    // Hide date picker when form is submitted
     form_historic_date.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Remove this if you want the form to actually submit
+        e.preventDefault();
         datePickerContainer.classList.remove('show');
         adjustPosition();
 
@@ -110,10 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
             highlightIfEmpty(countryInput);
             countryInput.focus(); 
         }else{
-            if (isFetching) return; // Prevent multiple clicks
-
+            if (isFetching) return;
             isFetching = true;
-            searchButton.disabled = true; // Disable the button
+            searchButton.disabled = true;
             loadingOverlay.style.display = 'flex';
             try {
                 const response = await fetch(`/search_historic?country=${country}&indicator=${indicator}&from_date=${dateFrom_}&to_date=${dateTo_}`);
@@ -130,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert(`Error: ${data.error}`);
                     return;
                 }  
-                // Update calendar table
                 updateCalendarTable(data.calendar_data);
 
                 return data;
@@ -148,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } finally {
                 isFetching = false;
-                searchButton.disabled = false; // Re-enable the button
+                searchButton.disabled = false;
                 loadingOverlay.style.display = 'none';
             }
         }        
@@ -161,21 +151,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightIfEmpty(inputElement) {
-        // Fix: 'boxshadow' should be 'boxShadow' (camelCase)
         inputElement.style.boxShadow = `0 0 0 0.2rem ${getComputedStyle(root).getPropertyValue('--input-empty-shadow')}`;
     }
     
     function restoreHighlight(inputElement) {
-        // Fix: 'boxshadow' should be 'boxShadow' (camelCase)
         inputElement.style.boxShadow = ``;
     }
     
-    // Add blur (unfocus) event listener
     countryInput.addEventListener('blur', function() {
         restoreHighlight(this);
     });
     
-    // Update on input
     countryInput.addEventListener('input', function() {
         if (this.value.trim()) {
             restoreHighlight(this);
@@ -185,16 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     countryInput.addEventListener('keydown', function(event) {
-        // Check if the pressed key is 'Enter'
         if (event.key === 'Enter') {
-            // Trigger the search button click event
             searchButton.click();
         }
     });
     indicatorInput.addEventListener('keydown', function(event) {
-        // Check if the pressed key is 'Enter'
         if (event.key === 'Enter') {
-            // Trigger the search button click event
             searchButton.click();
         }
     });
@@ -223,13 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 currentData = data;
 
-                // Update description
                 descriptionParagraph.textContent = !data.description ? "There is no description for this indicator." : data.description;
 
-                // Update calendar table
                 updateCalendarTable(data.calendar_data);
 
-                // Update chart
                 updateChart(data.historical_data);
 
 
@@ -247,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateCalendarTable(calendarData) {
-        calendarTableBody.innerHTML = ''; // Clear existing rows
+        calendarTableBody.innerHTML = ''; 
 
         if (!calendarData || calendarData.length === 0) {
             const newRow = calendarTableBody.insertRow();
@@ -269,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const growthCell = newRow.insertCell();            
             const countryFlag = getCountryFlag(countryNameToCode[item.Country]);
 
-            dateCell.textContent = new Date(item.Date).toLocaleDateString();
+            dateCell.textContent = item.Date;
 
             indicatorCell.textContent = '';
             indicatorCell.appendChild(countryFlag);
@@ -277,10 +256,10 @@ document.addEventListener('DOMContentLoaded', () => {
             indicatorCell.appendChild(categoryText);
 
             eventCell.appendChild(Object.assign(document.createElement('a'), {
-                href: item.SourceURL || '#', // Provide default if SourceURL is missing
-                target: '_blank',           // Open link in new tab
-                rel: 'noopener noreferrer', // Security best practice
-                textContent: item.Event || 'N/A' // Default text if Event is missing
+                href: item.SourceURL || '#',
+                target: '_blank',  
+                rel: 'noopener noreferrer', 
+                textContent: item.Event || 'N/A' 
             }));
 
             actualCell.textContent = item.Actual ?? 'N/A';
@@ -292,31 +271,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setGrowthIcon(growthCell, growthSign) {
-        // Clear existing content in the cell
         growthCell.innerHTML = '';
       
         let iconElement = document.createElement('i');
-        iconElement.setAttribute('aria-hidden', 'true'); // Good practice for accessibility
+        iconElement.setAttribute('aria-hidden', 'true');
       
         switch (growthSign) {
           case 'Positive':
-            iconElement.classList.add('fas', 'fa-arrow-up'); // Font Awesome classes for up arrow
+            iconElement.classList.add('fas', 'fa-arrow-up');
             iconElement.style.color = 'green';
             break;
         case 'Negative':
-            iconElement.classList.add('fas', 'fa-arrow-down'); // Font Awesome classes for down arrow
+            iconElement.classList.add('fas', 'fa-arrow-down');
             iconElement.style.color = 'red';
             break;
         case 'Neutral':
-            iconElement.classList.add('fas', 'fa-square'); // Font Awesome classes for square
+            iconElement.classList.add('fas', 'fa-square');
             iconElement.style.color = 'blue';
             break;
         case 'N/A':
-            iconElement.classList.add('fas', 'fa-minus'); // Font Awesome classes for minus (or use another icon)
+            iconElement.classList.add('fas', 'fa-minus'); 
             iconElement.style.color = 'gray';
             break;
         default:
-            iconElement.classList.add('fas', 'fa-question'); // Font Awesome classes for question mark
+            iconElement.classList.add('fas', 'fa-question');
             iconElement.style.color = 'black';
             break;
         }
@@ -327,8 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderChart(historicalData_, chartData) {
         if (!historicalData_ || historicalData_.length === 0) {
-            // Handle the case where historicalData_ is empty
-            document.getElementById('chartContainer').innerHTML = '<p>No historical data available.</p>'; // Or display an error message
+            document.getElementById('chartContainer').innerHTML = '<p>No historical data available.</p>'; 
             return;
         }
         Highcharts.stockChart('chartContainer', {
@@ -339,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: `${historicalData_[0]["Country"]} ${historicalData_[0]["Category"]}`
             },
             xAxis: {
-                type: 'datetime',  // Use datetime for x-axis
+                type: 'datetime',
                 title: {
                     text: 'Date'
                 }
@@ -354,12 +331,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 data: chartData
             }],
             tooltip: {
-                xDateFormat: '%Y-%m-%d',  // Format the tooltip for date display
+                xDateFormat: '%Y-%m-%d',
                 shared: true,
                 formatter: function() {
-                    // 'this' refers to the tooltip object
                     var points = this.points;
-                    var date = Highcharts.dateFormat('%Y-%m-%d', this.x); // Format the date
+                    var date = Highcharts.dateFormat('%Y-%m-%d', this.x); 
                     var s = '<span style="color: red;">\u25CF</span> ' + '<b>' + date + '</b>';
         
                     points.forEach(function(point) {
@@ -384,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const chartData = historicalData.map(item => {
             return {
-                x: new Date(item.DateTime).getTime(),  // Convert date to timestamp
+                x: new Date(item.DateTime).getTime(),
                 y: item.Value
             };
         });
@@ -395,19 +371,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const flagImg = document.createElement('img');
         flagImg.src = `https://flagcdn.com/16x12/${countryCode.toLowerCase()}.png`;
         flagImg.alt = `${countryCode} flag`;
-        flagImg.style.marginLeft = '8px';  // Optional: Add spacing between text and flag
-        return flagImg;  // Return the flag image as HTML content
+        flagImg.style.marginLeft = '8px';  
+        return flagImg; 
     }  
     
-     // Function to convert JSON data to CSV
      function jsonToCsv(jsonData) {
         const headers = Object.getOwnPropertyNames(jsonData[0]);
         const csvRows = [];
 
-        // Add header row
         csvRows.push(headers.join(','));
 
-        // Add data rows
         for (const row of jsonData) {
             const values = headers.map(header => {
             const escaped = ('' + row[header]).replace(/"/g, '\\"');
@@ -418,7 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return csvRows.join('\n');
     }    
 
-    // Function to trigger the download
     function downloadData(format) {
         let dataContent, filename, mimeType;
 
@@ -426,12 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
             dataContent = jsonToCsv(currentData.historical_data);
             filename = 'data.csv';
             mimeType = 'text/csv';
-        } else if (format.toLowerCase().includes("json")){ // Default to JSON
-            dataContent = JSON.stringify(currentData.historical_data, null, 2); // Pretty print JSON
+        } else if (format.toLowerCase().includes("json")){
+            dataContent = JSON.stringify(currentData.historical_data, null, 2);
             filename = 'data.json';
             mimeType = 'application/json';
         } else {
-            alert("Invalid download format. Please choose 'csv' or 'json'."); // Inform the user
+            alert("Invalid download format. Please choose 'csv' or 'json'."); 
             return;
         }
 

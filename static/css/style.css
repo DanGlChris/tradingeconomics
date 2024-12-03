@@ -8,41 +8,41 @@
   }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, readable font */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     margin: 0;
-    background-color: #f8f9fa; /* Soft background color for a modern look */
-    color: var(--text_color); /* Dark gray text for readability */
-    line-height: 1; /* Improved line height for better readability */
+    background-color: #f8f9fa; 
+    color: var(--text_color); 
+    line-height: 1; 
 }
 
 input[type="text"] {
     width: 5.5em;
     height: 8px;
-    padding: 10px 15px; /* Padding for better spacing */
-    border: 1px solid #ced4da; /* Light border */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 14px; /* Readable font size */
-    color: #495057; /* Text color */
-    background-color: #ffffff; /* White background */
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Smooth transition for focus */
+    padding: 10px 15px; 
+    border: 1px solid #ced4da; 
+    border-radius: 5px; 
+    font-size: 14px; 
+    color: #495057; 
+    background-color: #ffffff; 
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 input[type="text"]:focus {
-    border-color: var(--button-color); /* Highlight border on focus */
-    outline: 0; /* Remove default outline */
-    box-shadow: 0 0 0 0.2rem var(--input-shadow); /* Subtle box shadow on focus */
+    border-color: var(--button-color); 
+    outline: 0; 
+    box-shadow: 0 0 0 0.2rem var(--input-shadow); 
 }
 
-input[type="text"]::placeholder { /* Style for placeholder text */
-    color: #adb5bd; /* Lighter color for placeholder */
-    opacity: 1; /* Ensure full opacity */
+input[type="text"]::placeholder { 
+    color: #adb5bd; 
+    opacity: 1; 
 }
 
-/* Optional: Style for disabled text fields */
+
 input[type="text"]:disabled {
-    background-color: #e9ecef; /* Grayed out background */
-    opacity: 0.7; /* Reduce opacity */
-    cursor: not-allowed; /* Show not-allowed cursor */
+    background-color: #e9ecef; 
+    opacity: 0.7; 
+    cursor: not-allowed; 
 }   
 
 .container {
@@ -54,21 +54,21 @@ input[type="text"]:disabled {
 @media (min-width: 1024px) {
     .container {
         width: 100%;
-        max-width: 1200px; /* Set a max-width for very large screens */
-        margin: 0 auto; /* Center the container on larger screens */
+        max-width: 1200px; 
+        margin: 0 auto; 
         padding: 0;
     }
 
     input[type="text"] {
         width: 8.5em;
         height: 8px;
-        padding: 10px 15px; /* Padding for better spacing */
-        border: 1px solid #ced4da; /* Light border */
-        border-radius: 5px; /* Rounded corners */
-        font-size: 14px; /* Readable font size */
-        color: #495057; /* Text color */
-        background-color: #ffffff; /* White background */
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Smooth transition for focus */
+        padding: 10px 15px; 
+        border: 1px solid #ced4da; 
+        border-radius: 5px; 
+        font-size: 14px; 
+        color: #495057; 
+        background-color: #ffffff; 
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; 
     }
     
 }
@@ -80,15 +80,15 @@ input[type="text"]:disabled {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0); /* Semi-transparent white */
+    background: rgba(255, 255, 255, 0); 
     display: none;
     justify-content: center;
     align-items: center;
 }
 
 .loading-spinner {
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #3498db; /* Blue */
+    border: 8px solid #f3f3f3; 
+    border-top: 8px solid #3498db;
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -100,7 +100,6 @@ input[type="text"]:disabled {
     100% { transform: rotate(360deg); }
 }
 
-/* Sections Styling */
 .navbar{
     display: flex; 
     justify-content: space-between; 
@@ -116,20 +115,20 @@ input[type="text"]:disabled {
     align-items: baseline;
     margin-top: 1px;
     margin-bottom: 5px;
-    padding: 15px 15px; /* Increased padding for better spacing */
-    border-radius: 5px; /* Slightly rounded corners for a softer look */
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    background-color: #ffffff; /* White background for sections */
+    padding: 15px 15px; 
+    border-radius: 5px; 
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  */
+    background-color: #ffffff; 
 }
 .search-section h3{
     margin: 0px;
 }
 .description-section, .chart-section, .calendar-section {
     margin-bottom: 5px;
-    padding: 15px 15px; /* Increased padding for better spacing */
-    border-radius: 5px; /* Slightly rounded corners for a softer look */
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    background-color: #ffffff; /* White background for sections */
+    padding: 15px 15px;
+    border-radius: 5px; 
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    background-color: #ffffff; 
 }
 .description-section h3{
     margin-top: 2px;
@@ -156,46 +155,45 @@ input[type="text"]:disabled {
     text-decoration: none;
 }
 
-/* Chart Controls Styling */
+
 .chart-controls {
     margin-bottom: 15px;
-    display: flex; /* Use flexbox for layout */
-    gap: 10px; /* Add gap between controls */
-    align-items: center; /* Align items vertically */
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
 }
 
 .search-section button, .chart-controls button, .calendar-section button{
     padding: 7px 15px;
     border: none;
     border-radius: 2px;
-    background-color: var(--button-color); /* Primary color for buttons */
+    background-color: var(--button-color); 
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    transition: background-color 0.3s ease; 
 }
 
 .search-section button:hover, .chart-controls button:hover {
-    background-color: var(--button-hover-color); /* Darker shade on hover */
+    background-color: var(--button-hover-color); 
 }
 
 .chart-controls select{
     padding: 7px 15px;
     border: none;
     border-radius: 2px;
-    background-color: var(--button-color); /* Primary color for buttons */
+    background-color: var(--button-color); 
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    transition: background-color 0.3s ease; 
 }
 .chart-controls select:hover {
-    background-color: var(--button-hover-color); /* Slightly darker shade on hover */
+    background-color: var(--button-hover-color); 
 }   
 
-/* Chart Styling */
 #data-chart {
-    max-width: 100%; /* Responsive width */
-    height: 400px; /* Fixed height or adjust as needed */
-    margin: 20px 0; /* Add margin for spacing */
+    max-width: 100%; 
+    height: 400px; 
+    margin: 20px 0; 
 }
 
 .highcharts-credits{
@@ -214,15 +212,14 @@ input[type="text"]:disabled {
     margin: 0px;
 }
 
-/* Button styling */
 #calendar-button-picker {
     padding: 7px 15px;
     border: none;
     border-radius: 2px;
-    background-color: var(--button-color); /* Primary color for buttons */
+    background-color: var(--button-color); 
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    transition: background-color 0.3s ease; 
 }
 
 #calendar-button-picker:hover{    
@@ -230,9 +227,9 @@ input[type="text"]:disabled {
 }
 
 .date-picker-container {
-    display: none; /* Hidden by default */
+    display: none; 
     position: absolute;
-    z-index: 1000; /* Ensures it appears above other elements */
+    z-index: 1000; 
     bottom: 100%;
     right: 0%;
     transform: translateX(-45px) translateY(35px);
@@ -243,18 +240,17 @@ input[type="text"]:disabled {
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-/* Show container when button is clicked (you'll need JavaScript for this) */
+
 .date-picker-container.show {
     display: block;
 }
-/* Form styling */
+
 .date-picker-container form {
     display: flex;
     flex-direction: column;
     gap: 0px;
 }
 
-/* Input container styling */
 .date-input {
     width: 100%;
     padding-bottom: 5px;
@@ -271,7 +267,6 @@ input[type="text"]:disabled {
     border-radius: 4px;
 }
 
-/* Submit button styling */
 .date-picker-container button[type="submit"] {
     padding: 8px 15px;
     background-color: var(--button-color);
@@ -285,31 +280,29 @@ input[type="text"]:disabled {
     background-color: var(--button-hover-color);
 }
 
-
-/* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px; /* Add margin for spacing */
-    /*box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    border-radius: 2px; /* Rounded corners for table */
-    overflow: hidden; /* Hide overflow to maintain rounded corners */
+    margin-top: 10px; 
+    /*box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); */
+    border-radius: 2px; 
+    overflow: hidden; 
 }
 
 th, td {
     text-align: left;
-    border-bottom: 1px solid #e9ecef; /* Light border for rows */
+    border-bottom: 1px solid #e9ecef;
 }
 
 th {
-    padding: 10px 10px; /* Increased padding for better readability */
-    background-color: var(--button-hover-color); /* Light background for header */
-    color: #f8f9fa; /* Slightly darker text for headers */
-    font-weight: 500; /* Medium font weight for headers */
+    padding: 10px 10px; 
+    background-color: var(--button-hover-color); 
+    color: #f8f9fa;
+    font-weight: 500;
 }
 td {
-    padding: 7px 10px; /* Increased padding for better readability */    
-    font-size: 12px; /* Readable font size */
+    padding: 7px 10px; 
+    font-size: 12px; 
 }
 td a{    
     color: var(--text_color);
@@ -321,15 +314,15 @@ td a:-webkit-any-link {
 
 td a:hover {
   text-decoration-line: underline;
-  text-decoration-thickness: 1px; /* Optional: control thickness */
-  text-decoration-style: solid;   /* Optional: style can be solid, wavy, dashed, etc. */
+  text-decoration-thickness: 1px; 
+  text-decoration-style: solid;   
 }
 tr:nth-child(even) {
-    background-color: #f8f9fa; /* Alternate row colors for better readability */
+    background-color: #f8f9fa; 
 }
 
 tr:hover {
-    background-color: #e9ecef; /* Highlight row on hover */
+    background-color: #e9ecef; 
 }
 
 .chart-title-section{
@@ -341,7 +334,6 @@ tr:hover {
     margin: 0px;
 }
 
-/*Chart canvas*/
 .iChart-chart {
     background-color: #fff;
     position: relative;
