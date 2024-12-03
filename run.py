@@ -3,9 +3,10 @@ import requests
 import pandas as pd
 import os
 from datetime import datetime, timedelta
+import re
 
 
-API_KEY = '720523bc1caf494:rzmtik6gz24bohs'
+API_KEY = '55801b0c9a9c45d:s4pb7uh0wrb1aqy'
 app = Flask(__name__)
 
 # Helper function to fetch data from Trading Economics API
@@ -122,19 +123,34 @@ def search_data():
     return jsonify(response_data)
 
 def calculate_growth(actual, previous):
-    if pd.isna(actual) or pd.isna(previous) or actual == 'N/A' or previous == 'N/A':
+    # 1. Handle Missing Data (NaN or 'N/A')
+    if pd.isna(actual) or pd.isna(previous) or str(actual).upper() == 'N/A' or str(previous).upper() == 'N/A':
         return 'N/A'
-    try:
-        actual = float(actual)
-        previous = float(previous)
-        if actual > previous:
-            return 'Positive'
-        elif actual < previous:
-            return 'Negative'
+
+    # 2. Extract Numerical Values using Regex
+    def extract_number(value):
+        if isinstance(value, (int, float)):
+            return value  # If it's already a number, return it
+        match = re.search(r'[-+]?\d*\.?\d+', str(value))  # Regex to find numbers (integers or decimals)
+        if match:
+            return float(match.group(0))
         else:
-            return 'Neutral'
-    except ValueError:
+            return None  # Return None if no number is found
+
+    actual_num = extract_number(actual)
+    previous_num = extract_number(previous)
+
+    # 3. Validate Extracted Numbers
+    if actual_num is None or previous_num is None:
         return 'N/A'
+
+    # 4. Calculate and Return Growth Direction
+    if actual_num > previous_num:
+        return 'Positive'
+    elif actual_num < previous_num:
+        return 'Negative'
+    else:
+        return 'Neutral'
 
 if __name__ == '__main__':
     app.run(debug=True)

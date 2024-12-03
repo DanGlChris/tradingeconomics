@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const root = document.documentElement;
+    const loadingOverlay = document.getElementById('loadingOverlay');
     const searchButton = document.getElementById('search-button');
     const countryInput = document.getElementById('country');
     const indicatorInput = document.getElementById('indicator');
 
     const descriptionParagraph = document.getElementById('indicator-description');
+    
+    const errorElement = document.getElementById('error-message');
 
     //const chartCanvas = document.getElementById('data-chart');
     const calendarTableBody = document.getElementById('calendar-table').querySelector('tbody');
@@ -12,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateRangeSelect = document.getElementById('date-range');
     const downloadCsvButton = document.getElementById('download-csv');
     const downloadJsonButton = document.getElementById('download-json');
+    const btnDownload = document.getElementById('download-action-btn');
 
     const calendarButton = document.getElementById('calendar-button-picker');
     const datePickerContainer = document.querySelector('.date-picker-container');
@@ -55,8 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "Vietnam": "VN", "Yemen": "YE", "Zambia": "ZM", "Zimbabwe": "ZW"
     };
 
-    let currentChart = null;
     let currentData = null;
+    let isFetching = false; 
 
     function adjustPosition() {
         const buttonRect = calendarButton.getBoundingClientRect();
@@ -96,18 +100,24 @@ document.addEventListener('DOMContentLoaded', () => {
         datePickerContainer.classList.remove('show');
         adjustPosition();
 
-        const country = countryInput.value.trim().replace(/[^a-zA-Z0-9\s]/g, '');
-        const indicator = indicatorInput.value.replace(/[^a-zA-Z0-9\s]/g, '');
+        const country = encodeURIComponent(countryInput.value.trim().replace(/[^a-zA-Z0-9\s]/g, ''));
+        const indicator = encodeURIComponent(indicatorInput.value.replace(/[^a-zA-Z0-9\s]/g, ''));
 
-        const dateFrom_ = date_historic_From_Input.value.trim().replace("/","-");
-        const dateTo_ = date_historic_To_Input.value.trim().replace("/","-");
+        const dateFrom_ = encodeURIComponent(date_historic_From_Input.value.trim().replace("/","-"));
+        const dateTo_ = encodeURIComponent(date_historic_To_Input.value.trim().replace("/","-"));
     
-        if (!country) {
+        if (!country || country.toLowerCase().includes("all")) {
             highlightIfEmpty(countryInput);
             countryInput.focus(); 
         }else{
+            if (isFetching) return; // Prevent multiple clicks
+
+            isFetching = true;
+            searchButton.disabled = true; // Disable the button
+            loadingOverlay.style.display = 'flex';
             try {
                 const response = await fetch(`/search_historic?country=${country}&indicator=${indicator}&from_date=${dateFrom_}&to_date=${dateTo_}`);
+                loadingOverlay.style.display = 'none';
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -126,11 +136,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 return data;
     
             } catch (error) {
-                console.error('Error fetching data:', error);
+                highlightIfEmpty(countryInput);
+                indicatorInput.focus();
+                if (error.message.includes('HTTP error! status: 404')) {
+                    displayErrorMessage('Resource not found.');
+                } else if (error.message.includes('Failed to fetch')) {
+                    displayErrorMessage('Network error. Please check your internet connection.');
+                } else {
+                    displayErrorMessage('An unexpected error occurred. Please try again later.');
+                    console.error('Error fetching data:', error);
+                }
+            } finally {
+                isFetching = false;
+                searchButton.disabled = false; // Re-enable the button
+                loadingOverlay.style.display = 'none';
             }
         }        
         
     });
+
+    function displayErrorMessage(message) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
 
     function highlightIfEmpty(inputElement) {
         // Fix: 'boxshadow' should be 'boxShadow' (camelCase)
@@ -172,15 +200,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     searchButton.addEventListener('click', async () => {
-        const country = countryInput.value.trim().replace(/[^a-zA-Z0-9\s]/g, '');
-        const indicator = indicatorInput.value.replace(/[^a-zA-Z0-9\s]/g, '');
+        const country = encodeURIComponent(countryInput.value.trim().replace(/[^a-zA-Z0-9\s]/g, ''));
+        const indicator = encodeURIComponent(indicatorInput.value.replace(/[^a-zA-Z0-9\s]/g, ''));
     
-        if (!country) {
+        if (!country || country.toLowerCase().includes("all")) {
             highlightIfEmpty(countryInput);
             countryInput.focus(); 
         }else{
-            try {
+            try {                
+                loadingOverlay.style.display = 'flex';
                 const response = await fetch(`/search?country=${country}&indicator=${indicator}`);
+                loadingOverlay.style.display = 'none';
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -194,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentData = data;
 
                 // Update description
-                descriptionParagraph.textContent = data.description;
+                descriptionParagraph.textContent = !data.description ? "There is no description for this indicator." : data.description;
 
                 // Update calendar table
                 updateCalendarTable(data.calendar_data);
@@ -203,10 +233,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateChart(data.historical_data);
 
 
-            } catch (error) {
+            } catch (error) { 
+                highlightIfEmpty(countryInput);
+                indicatorInput.focus()
                 console.error('Error fetching data:', error);
             }
         }        
+    });
+
+    btnDownload.addEventListener('click', function() {
+        const format = document.getElementById('download-btn').value;
+        downloadData(format);
     });
 
     function updateCalendarTable(calendarData) {
@@ -219,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
             newCell.textContent = 'No calendar data available for the selected country and indicator.';
             return;
         }
-        const countryFlag = getCountryFlag(countryNameToCode[calendarData[0]["Country"]]);
 
         calendarData.forEach(item => {
             const newRow = calendarTableBody.insertRow();
@@ -230,21 +266,71 @@ document.addEventListener('DOMContentLoaded', () => {
             const previousCell = newRow.insertCell();
             const teForecastCell = newRow.insertCell();
             const forecastCell = newRow.insertCell();
-            const growthCell = newRow.insertCell();
+            const growthCell = newRow.insertCell();            
+            const countryFlag = getCountryFlag(countryNameToCode[item.Country]);
 
-            dateCell.textContent = item.Date;
-            indicatorCell.textContent = item.Category;
+            dateCell.textContent = new Date(item.Date).toLocaleDateString();
+
+            indicatorCell.textContent = '';
             indicatorCell.appendChild(countryFlag);
-            eventCell.appendChild(Object.assign(document.createElement('a'), {href: `${item.SourceURL}`, textContent: item.Event}));
-            actualCell.textContent = item.Actual;
-            previousCell.textContent = item.Previous;
-            teForecastCell.textContent = item.TEForecast;
-            forecastCell.textContent = item.Forecast;
-            growthCell.textContent = item['Sign of Growth']; // Accessing with bracket notation because of space in key name
+            const categoryText = document.createTextNode(" " +item.Category);
+            indicatorCell.appendChild(categoryText);
+
+            eventCell.appendChild(Object.assign(document.createElement('a'), {
+                href: item.SourceURL || '#', // Provide default if SourceURL is missing
+                target: '_blank',           // Open link in new tab
+                rel: 'noopener noreferrer', // Security best practice
+                textContent: item.Event || 'N/A' // Default text if Event is missing
+            }));
+
+            actualCell.textContent = item.Actual ?? 'N/A';
+            previousCell.textContent = item.Previous ?? 'N/A';
+            teForecastCell.textContent = item.TEForecast ?? 'N/A';
+            forecastCell.textContent = item.Forecast ?? 'N/A';
+            setGrowthIcon(growthCell, item['Sign of Growth']);
         });
     }
 
+    function setGrowthIcon(growthCell, growthSign) {
+        // Clear existing content in the cell
+        growthCell.innerHTML = '';
+      
+        let iconElement = document.createElement('i');
+        iconElement.setAttribute('aria-hidden', 'true'); // Good practice for accessibility
+      
+        switch (growthSign) {
+          case 'Positive':
+            iconElement.classList.add('fas', 'fa-arrow-up'); // Font Awesome classes for up arrow
+            iconElement.style.color = 'green';
+            break;
+        case 'Negative':
+            iconElement.classList.add('fas', 'fa-arrow-down'); // Font Awesome classes for down arrow
+            iconElement.style.color = 'red';
+            break;
+        case 'Neutral':
+            iconElement.classList.add('fas', 'fa-square'); // Font Awesome classes for square
+            iconElement.style.color = 'blue';
+            break;
+        case 'N/A':
+            iconElement.classList.add('fas', 'fa-minus'); // Font Awesome classes for minus (or use another icon)
+            iconElement.style.color = 'gray';
+            break;
+        default:
+            iconElement.classList.add('fas', 'fa-question'); // Font Awesome classes for question mark
+            iconElement.style.color = 'black';
+            break;
+        }
+
+        growthCell.appendChild(iconElement);
+    }
+
+
     function renderChart(historicalData_, chartData) {
+        if (!historicalData_ || historicalData_.length === 0) {
+            // Handle the case where historicalData_ is empty
+            document.getElementById('chartContainer').innerHTML = '<p>No historical data available.</p>'; // Or display an error message
+            return;
+        }
         Highcharts.stockChart('chartContainer', {
             rangeSelector: {
                 selected: 1
@@ -264,15 +350,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             series: [{
-                name: 'Value',
+                name: `${historicalData_[0]["HistoricalDataSymbol"]}`,
                 data: chartData
             }],
             tooltip: {
                 xDateFormat: '%Y-%m-%d',  // Format the tooltip for date display
-                shared: true
+                shared: true,
+                formatter: function() {
+                    // 'this' refers to the tooltip object
+                    var points = this.points;
+                    var date = Highcharts.dateFormat('%Y-%m-%d', this.x); // Format the date
+                    var s = '<span style="color: red;">\u25CF</span> ' + '<b>' + date + '</b>';
+        
+                    points.forEach(function(point) {
+                        s += '<br/><span style="color:' + point.series.color + '">\u25CF</span> ' +
+                            point.series.name + ': ' + point.y;
+                    });
+        
+                    return s;
+                }                
             },
             accessibility: {
-                enabled: false
+                enabled: true,
             }
         });
     }
@@ -280,10 +379,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateChart(historicalData) {
         if (!historicalData || historicalData.length === 0) {
-            alert('No historical data available for the selected country and indicator.');
+            alert('No data available for the selected country and indicator.');
             return;
         }
-
         const chartData = historicalData.map(item => {
             return {
                 x: new Date(item.DateTime).getTime(),  // Convert date to timestamp
@@ -292,45 +390,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         renderChart(historicalData, chartData);
     }
-
-    chartTypeSelect.addEventListener('change', () => {
-        if (currentData) {
-            updateChart(currentData.historical_data);
-        }
-    });
-
-
-    downloadCsvButton.addEventListener('click', () => {
-        if (!currentData || !currentData.historical_data) {
-            alert('No data to download.');
-            return;
-        }
-        downloadData('csv', currentData.historical_data);
-    });
-
-    downloadJsonButton.addEventListener('click', () => {
-        if (!currentData || !currentData.historical_data) {
-            alert('No data to download.');
-            return;
-        }
-        downloadData('json', currentData.historical_data);
-    });
-
-    function downloadData(fileType, data) {
-        const jsonData = JSON.stringify(data, null, 2); // For JSON download
-
-        let csvContent = "Date,Value\n";  // For CSV download
-        data.forEach(item => {
-            csvContent += `${item.Date},${item.Value}\n`;
-        });
-
-
-        const blob = new Blob([fileType === 'json' ? jsonData : csvContent], { type: `application/${fileType}` });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `data.${fileType}`;
-        link.click();
-    }
     
     function getCountryFlag(countryCode) {
         const flagImg = document.createElement('img');
@@ -338,6 +397,53 @@ document.addEventListener('DOMContentLoaded', () => {
         flagImg.alt = `${countryCode} flag`;
         flagImg.style.marginLeft = '8px';  // Optional: Add spacing between text and flag
         return flagImg;  // Return the flag image as HTML content
+    }  
+    
+     // Function to convert JSON data to CSV
+     function jsonToCsv(jsonData) {
+        const headers = Object.getOwnPropertyNames(jsonData[0]);
+        const csvRows = [];
+
+        // Add header row
+        csvRows.push(headers.join(','));
+
+        // Add data rows
+        for (const row of jsonData) {
+            const values = headers.map(header => {
+            const escaped = ('' + row[header]).replace(/"/g, '\\"');
+            return `"${escaped}"`;
+            });
+            csvRows.push(values.join(','));
+        }
+        return csvRows.join('\n');
     }    
+
+    // Function to trigger the download
+    function downloadData(format) {
+        let dataContent, filename, mimeType;
+
+        if (format.toLowerCase().includes("csv")) {
+            dataContent = jsonToCsv(currentData.historical_data);
+            filename = 'data.csv';
+            mimeType = 'text/csv';
+        } else if (format.toLowerCase().includes("json")){ // Default to JSON
+            dataContent = JSON.stringify(currentData.historical_data, null, 2); // Pretty print JSON
+            filename = 'data.json';
+            mimeType = 'application/json';
+        } else {
+            alert("Invalid download format. Please choose 'csv' or 'json'."); // Inform the user
+            return;
+        }
+
+        const blob = new Blob([dataContent], { type: mimeType });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
 
 });
